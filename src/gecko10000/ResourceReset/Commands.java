@@ -21,7 +21,7 @@ public class Commands {
                 return null;
             }
             return s;
-        }).tabStream(s -> plugin.getConfig().getConfigurationSection("worlds").getKeys(false).stream());
+        }).tabStream(s -> plugin.getResourceWorldNames().stream());
         new CommandParser(plugin.getResource("command.rdcml"))
                 .setArgTypes(resourceWorldType)
                 .parse()
@@ -44,8 +44,7 @@ public class Commands {
 
     @CommandHook("reload")
     public void reload(CommandSender sender) {
-        plugin.saveDefaultConfig();
-        plugin.reloadConfig();
+        plugin.reload();
         plugin.sendMessage(sender, "&aConfig reloaded!");
     }
 

@@ -14,6 +14,7 @@ import redempt.redlib.misc.Task;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 public class ResourceReset extends JavaPlugin {
 
@@ -23,6 +24,12 @@ public class ResourceReset extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         new Commands(this);
+        reload();
+    }
+
+    public void reload() {
+        saveDefaultConfig();
+        reloadConfig();
         createWorlds();
     }
 
@@ -43,9 +50,11 @@ public class ResourceReset extends JavaPlugin {
     }*/
 
     private void createWorlds() {
-        ConfigurationSection worlds = getConfig().getConfigurationSection("worlds");
-        for (String key : worlds.getKeys(false)) {
-
+        for (String key : getResourceWorldNames()) {
+            String worldName = getConfig().getString("worlds." + key + ".world");
+            World.Environment environment = World.Environment.valueOf(getConfig().getString("worlds." + key + ".type"));
+            int borderSize = getConfig().getInt("worlds." + key + ".size");
+            createWorld(worldName, environment, borderSize);
         }
     }
 
@@ -53,7 +62,11 @@ public class ResourceReset extends JavaPlugin {
         WorldCreator creator = new WorldCreator(name)
                 .environment(e);
         creator.keepSpawnLoaded(TriState.FALSE);
-        creator.createWorld();
+        creator.createWorld().getWorldBorder().setSize(borderSize);
+    }
+
+    public Set<String> getResourceWorldNames() {
+        return getConfig().getConfigurationSection("worlds").getKeys(false);
     }
 
     public void sendMessage(CommandSender sender, String message) {

@@ -18,13 +18,16 @@ public class TeleportManager {
         this.plugin = plugin;
     }
 
-    void randomTeleport(Player player, String worldName) {
-        World world = Bukkit.getWorld(plugin.getConfig().getString("worlds." + worldName + ".world"));
+    void randomTeleport(Player player, String worldDisplayName) {
+        if (worldDisplayName == null) {
+            worldDisplayName = plugin.getResourceWorldNames().stream().findFirst().orElseThrow();
+        }
+        World world = Bukkit.getWorld(plugin.getConfig().getString("worlds." + worldDisplayName + ".world"));
         if (world == null) {
-            plugin.sendMessage(player, "&c" + worldName + " is not configured.");
+            plugin.sendMessage(player, "&c" + worldDisplayName + " is not configured.");
             return;
         }
-        int range = plugin.getConfig().getInt("worlds." + worldName + ".teleportRange");
+        int range = plugin.getConfig().getInt("worlds." + worldDisplayName + ".teleportRange");
         Location center = world.getWorldBorder().getCenter();
         int lowX = center.getBlockX() - range, highX = center.getBlockX() + range,
         lowZ = center.getBlockZ() - range, highZ = center.getBlockZ() + range;

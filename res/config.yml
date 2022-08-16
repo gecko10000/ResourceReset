@@ -1,10 +1,17 @@
 worlds:
   # first world is the default - target of /resource
+  # the friendly name of the world - used as the argument in /resource
   overworld:
+    # the name of the corresponding world file
     world: resource
+    # can be NORMAL, NETHER, or THE_END
+    # (or CUSTOM but don't use that)
     type: NORMAL
-    size: 5000 # side length
-    teleportRange: 2500 # radius
+    # world border size
+    # this is a DIAMETER
+    size: 5000
+    # teleport RADIUS
+    teleportRange: 2500
   nether:
     world: resource_nether
     type: NETHER
@@ -15,4 +22,4 @@ worlds:
     type: THE_END
     size: 5000
     teleportRange: 2500
-teleportAttempts: 5
+teleportAttempts: 10
