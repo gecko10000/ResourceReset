@@ -1,0 +1,4 @@
+name: ResourceReset
+main: gecko10000.ResourceReset.ResourceReset
+version: 0.1
+api-version: 1.13

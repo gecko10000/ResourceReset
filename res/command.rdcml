@@ -1,0 +1,20 @@
+resource,rw player:target?(context self) {
+    permission resource.teleport.overworld
+    help Teleport to the resource overworld
+    hook overworld
+
+    nether player:target?(context self) {
+        permission resource.teleport.nether
+        help Teleport to the resource nether
+        hook nether
+    }
+    end player:target?(context self) {
+        permission resource.teleport.end
+        help Teleport to the resource end
+        hook end
+    }
+    reload {
+        permission resource.reload
+        hook reload
+    }
+}

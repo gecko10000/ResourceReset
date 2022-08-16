@@ -1,0 +1,13 @@
+overworld:
+  name: resource
+  size: 5000 # side length
+  teleportRange: 2500 # radius
+nether:
+  name: resource_nether
+  size: 5000
+  teleportRange: 2500
+end:
+  name: resource_the_end
+  size: 5000
+  teleportRange: 2500
+teleportAttempts: 10
