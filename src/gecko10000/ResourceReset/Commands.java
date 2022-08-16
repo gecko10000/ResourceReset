@@ -51,5 +51,6 @@ public class Commands {
     @CommandHook("regenerate")
     public void regenerate(CommandSender sender) {
         plugin.sendMessage(sender, "&cRegenerating worlds...");
+        plugin.regenerateWorlds();
     }
 }

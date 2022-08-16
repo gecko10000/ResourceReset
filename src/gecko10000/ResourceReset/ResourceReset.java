@@ -1,6 +1,7 @@
 package gecko10000.ResourceReset;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.util.TriState;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,7 +15,9 @@ import redempt.redlib.misc.Task;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public class ResourceReset extends JavaPlugin {
 
@@ -33,21 +36,31 @@ public class ResourceReset extends JavaPlugin {
         createWorlds();
     }
 
-    /*public void regenerateWorlds() {
-        regenerateWorld(Bukkit.getWorld(getConfig().getString("worlds.overworld.name")));
-        regenerateWorld(Bukkit.getWorld(getConfig().getString("worlds.nether.name")));
-        regenerateWorld(Bukkit.getWorld(getConfig().getString("worlds.end.name")));
+    public void regenerateWorlds() {
+        Bukkit.broadcast(Component.text("Regenerating resource worlds! Prepare for a bit of lag.").color(NamedTextColor.RED));
+        getResourceWorldNames().stream()
+                .map(s -> getConfig().getString("worlds." + s + ".world"))
+                .filter(Objects::nonNull)
+                .map(Bukkit::getWorld)
+                .filter(Objects::nonNull)
+                .forEach(this::regenerateWorld);
     }
 
     private void regenerateWorld(World world) {
         String name = world.getName();
         World.Environment type = world.getEnvironment();
+        int borderSize = (int) world.getWorldBorder().getSize();
+        World mainWorld = Bukkit.getWorlds().get(0);
+        world.getPlayers().forEach(p -> p.teleport(mainWorld.getSpawnLocation()));
         Bukkit.unloadWorld(world, false);
         Task.asyncDelayed(() -> {
             world.getWorldFolder().delete();
-            Task.syncDelayed(() -> createWorld(name, type));
+            Task.syncDelayed(() -> {
+                createWorld(name, type, borderSize);
+                getLogger().info("Regenerated world " + name);
+            });
         });
-    }*/
+    }
 
     private void createWorlds() {
         for (String key : getResourceWorldNames()) {

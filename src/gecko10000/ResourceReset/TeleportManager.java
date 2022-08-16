@@ -9,6 +9,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import redempt.redlib.misc.Task;
 
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -17,6 +18,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class TeleportManager {
+
+    private static final Duration TICK = Duration.ofMillis(50);
 
     private final ResourceReset plugin;
     private final Random random = new Random();
@@ -54,12 +57,24 @@ public class TeleportManager {
                     teleporting.remove(uuid);
                 });
         Task.asyncRepeating(task -> {
+            if (secondsElapsed[0] >= 60) {
+                teleportFuture.cancel(true);
+                plugin.sendMessage(player, "&cTimed out.");
+                task.cancel();
+                return;
+            }
             if (teleportFuture.isDone()) {
                 task.cancel();
                 return;
             }
-            player.showTitle(Title.title(Component.empty(), Component.text("Searching... " + ++secondsElapsed[0] + "s").color(NamedTextColor.YELLOW)));
+            player.showTitle(Title.title(titleComp("Searching..."),
+                    titleComp(++secondsElapsed[0] + "s"),
+                    Title.Times.times(Duration.ZERO, TICK.multipliedBy(70), TICK.multipliedBy(20))));
         }, 0, 20);
+    }
+
+    private Component titleComp(String content) {
+        return Component.text(content).color(NamedTextColor.YELLOW);
     }
 
     // recursively and asynchronously searches for a spot to teleport to
