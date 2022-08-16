@@ -36,8 +36,10 @@ public class Commands {
 
     @CommandHook("rtp")
     public void rtp(CommandSender sender, String worldName, Player target) {
-        if (target == null) {
+        if (target == null
+            || (!sender.getName().equals(target.getName()) && !sender.hasPermission("resource.teleport.others"))) {
             plugin.sendMessage(sender, "&cInvalid player.");
+            return;
         }
         plugin.manager.randomTeleport(target, worldName);
     }

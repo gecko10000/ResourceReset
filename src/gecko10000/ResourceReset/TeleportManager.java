@@ -53,7 +53,8 @@ public class TeleportManager {
         teleporting.add(uuid);
         CompletableFuture<Void> teleportFuture = tryTeleport(player, world, lowX, highX, lowZ, highZ, attempts)
                 .thenAccept(b -> {
-                    plugin.sendMessage(player, b ? "&aFound a spot in " + secondsElapsed[0] + " seconds." : "&cCould not find a safe spot after " + attempts + " attempts.");
+                    int time = secondsElapsed[0];
+                    plugin.sendMessage(player, b ? "&aFound a spot in " + time + " second" + (time == 1 ? "" : "s") + "." : "&cCould not find a safe spot after " + attempts + " attempts.");
                     teleporting.remove(uuid);
                 });
         Task.asyncRepeating(task -> {
