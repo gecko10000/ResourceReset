@@ -1,13 +1,20 @@
 package gecko10000.ResourceReset;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import redempt.redlib.misc.Task;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class TeleportManager {
 
@@ -18,7 +25,14 @@ public class TeleportManager {
         this.plugin = plugin;
     }
 
+    Set<UUID> teleporting = new ConcurrentSkipListSet<>();
+
     void randomTeleport(Player player, String worldDisplayName) {
+        UUID uuid = player.getUniqueId();
+        if (teleporting.contains(uuid)) {
+            plugin.sendMessage(player, "&cYou are already teleporting.");
+            return;
+        }
         if (worldDisplayName == null) {
             worldDisplayName = plugin.getResourceWorldNames().stream().findFirst().orElseThrow();
         }
@@ -31,7 +45,21 @@ public class TeleportManager {
         Location center = world.getWorldBorder().getCenter();
         int lowX = center.getBlockX() - range, highX = center.getBlockX() + range,
         lowZ = center.getBlockZ() - range, highZ = center.getBlockZ() + range;
-        tryTeleport(player, world, lowX, highX, lowZ, highZ, plugin.getConfig().getInt("teleportAttempts"));
+        int attempts = plugin.getConfig().getInt("teleportAttempts");
+        int[] secondsElapsed = {0};
+        teleporting.add(uuid);
+        CompletableFuture<Void> teleportFuture = tryTeleport(player, world, lowX, highX, lowZ, highZ, attempts)
+                .thenAccept(b -> {
+                    plugin.sendMessage(player, b ? "&aFound a spot in " + secondsElapsed[0] + " seconds." : "&cCould not find a safe spot after " + attempts + " attempts.");
+                    teleporting.remove(uuid);
+                });
+        Task.asyncRepeating(task -> {
+            if (teleportFuture.isDone()) {
+                task.cancel();
+                return;
+            }
+            player.showTitle(Title.title(Component.empty(), Component.text("Searching... " + ++secondsElapsed[0] + "s").color(NamedTextColor.YELLOW)));
+        }, 0, 20);
     }
 
     // recursively and asynchronously searches for a spot to teleport to
