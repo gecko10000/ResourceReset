@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import redempt.redlib.misc.FormatUtils;
 import redempt.redlib.misc.Task;
@@ -36,17 +37,24 @@ public class ResourceReset extends JavaPlugin {
         createWorlds();
     }
 
+    private static final int DELAY = 5;
+
     public void regenerateWorlds() {
-        Bukkit.broadcast(Component.text("Regenerating resource worlds! Prepare for a bit of lag.").color(NamedTextColor.RED));
-        getResourceWorldNames().stream()
-                .map(s -> getConfig().getString("worlds." + s + ".world"))
-                .filter(Objects::nonNull)
-                .map(Bukkit::getWorld)
-                .filter(Objects::nonNull)
-                .forEach(this::regenerateWorld);
+        Bukkit.broadcast(Component.text("Regenerating resource worlds in " + DELAY + " seconds! Prepare for a bit of lag.").color(NamedTextColor.RED));
+        Task.syncDelayed(() -> {
+            int[] order = {0};
+            getResourceWorldNames().forEach(s -> {
+                String worldName = getConfig().getString("worlds." + s + ".world");
+                if (worldName == null) return;
+                World world = Bukkit.getWorld(worldName);
+                if (world == null) return;
+                Task.syncDelayed(() -> regenerateWorld(world, s),
+                        20L * DELAY * order[0]++);
+            });
+        }, 20 * DELAY);
     }
 
-    private void regenerateWorld(World world) {
+    private void regenerateWorld(World world, String displayName) {
         String name = world.getName();
         World.Environment type = world.getEnvironment();
         int borderSize = (int) world.getWorldBorder().getSize();
@@ -57,7 +65,7 @@ public class ResourceReset extends JavaPlugin {
             world.getWorldFolder().delete();
             Task.syncDelayed(() -> {
                 createWorld(name, type, borderSize);
-                getLogger().info("Regenerated world " + name);
+                Bukkit.broadcast(Component.text("Regenerated " + displayName + ".").color(NamedTextColor.GREEN));
             });
         });
     }
@@ -80,6 +88,13 @@ public class ResourceReset extends JavaPlugin {
 
     public Set<String> getResourceWorldNames() {
         return getConfig().getConfigurationSection("worlds").getKeys(false);
+    }
+
+    public boolean isInResourceWorld(Player player) {
+        String playerWorld = player.getWorld().getName();
+        return getResourceWorldNames().stream()
+                .map(s -> getConfig().getString("worlds." + s + ".world"))
+                .anyMatch(playerWorld::equals);
     }
 
     public void sendMessage(CommandSender sender, String message) {
