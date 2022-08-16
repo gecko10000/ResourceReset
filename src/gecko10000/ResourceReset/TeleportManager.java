@@ -60,6 +60,7 @@ public class TeleportManager {
             if (secondsElapsed[0] >= 60) {
                 teleportFuture.cancel(true);
                 plugin.sendMessage(player, "&cTimed out.");
+                teleporting.remove(uuid);
                 task.cancel();
                 return;
             }
