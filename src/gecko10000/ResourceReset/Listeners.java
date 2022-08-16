@@ -24,7 +24,9 @@ public class Listeners implements Listener {
         boolean isDisallowedInResource = disallowedCommands.stream()
                 .anyMatch(s -> event.getMessage().startsWith(s));
         Player player = event.getPlayer();
-        if (plugin.isInResourceWorld(player) && isDisallowedInResource) {
+        if (!player.hasPermission("resource.commandBypass")
+                && !plugin.isInResourceWorld(player)
+                && isDisallowedInResource) {
             event.setCancelled(true);
             plugin.sendMessage(player, "&cYou can't run that command here.");
         }
