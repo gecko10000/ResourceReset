@@ -25,3 +25,4 @@ worlds:
 teleportAttempts: 10
 disallowedCommands:
 - /sethome
+resetIntervalHours: 72

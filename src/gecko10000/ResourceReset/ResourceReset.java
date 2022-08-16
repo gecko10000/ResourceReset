@@ -24,18 +24,20 @@ import java.util.concurrent.CompletableFuture;
 public class ResourceReset extends JavaPlugin {
 
     public final TeleportManager manager = new TeleportManager(this);
+    private AutomaticReset automaticReset;
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+        automaticReset = new AutomaticReset(this);
+        reload();
         new Commands(this);
         new Listeners(this);
-        reload();
     }
 
     public void reload() {
         saveDefaultConfig();
         reloadConfig();
+        automaticReset.restartTask();
         Task.syncDelayed(this::createWorlds);
     }
 
@@ -43,6 +45,8 @@ public class ResourceReset extends JavaPlugin {
 
     public void regenerateWorlds() {
         Bukkit.broadcast(Component.text("Regenerating resource worlds in " + DELAY + " seconds! Prepare for a bit of lag.").color(NamedTextColor.RED));
+        getConfig().set("lastRegen", System.currentTimeMillis());
+        saveConfig();
         Task.syncDelayed(() -> {
             int[] order = {0};
             getResourceWorldNames().forEach(s -> {
