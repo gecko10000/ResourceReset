@@ -15,6 +15,7 @@ import redempt.redlib.misc.FormatUtils;
 import redempt.redlib.misc.Task;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class ResourceReset extends JavaPlugin {
     public void reload() {
         saveDefaultConfig();
         reloadConfig();
-        createWorlds();
+        Task.syncDelayed(this::createWorlds);
     }
 
     private static final int DELAY = 5;
@@ -63,12 +64,21 @@ public class ResourceReset extends JavaPlugin {
         world.getPlayers().forEach(p -> p.teleport(mainWorld.getSpawnLocation()));
         Bukkit.unloadWorld(world, false);
         Task.asyncDelayed(() -> {
-            world.getWorldFolder().delete();
+            recursiveDelete(world.getWorldFolder());
             Task.syncDelayed(() -> {
                 createWorld(name, type, borderSize);
                 Bukkit.broadcast(Component.text("Regenerated " + displayName + ".").color(NamedTextColor.GREEN));
             });
         });
+    }
+
+    private void recursiveDelete(File file) {
+        if (file.isDirectory()) {
+            for (File child : file.listFiles()) {
+                recursiveDelete(child);
+            }
+        }
+        file.delete();
     }
 
     private void createWorlds() {
@@ -81,6 +91,7 @@ public class ResourceReset extends JavaPlugin {
     }
 
     private void createWorld(String name, World.Environment e, int borderSize) {
+        if (Bukkit.getWorld(name) != null) return;
         WorldCreator creator = new WorldCreator(name)
                 .environment(e);
         creator.keepSpawnLoaded(TriState.FALSE);
