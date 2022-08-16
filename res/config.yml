@@ -1,13 +1,18 @@
-overworld:
-  name: resource
-  size: 5000 # side length
-  teleportRange: 2500 # radius
-nether:
-  name: resource_nether
-  size: 5000
-  teleportRange: 2500
-end:
-  name: resource_the_end
-  size: 5000
-  teleportRange: 2500
-teleportAttempts: 10
+worlds:
+  # first world is the default - target of /resource
+  overworld:
+    world: resource
+    type: NORMAL
+    size: 5000 # side length
+    teleportRange: 2500 # radius
+  nether:
+    world: resource_nether
+    type: NETHER
+    size: 5000
+    teleportRange: 2500
+  end:
+    world: resource_the_end
+    type: THE_END
+    size: 5000
+    teleportRange: 2500
+teleportAttempts: 5
