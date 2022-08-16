@@ -28,6 +28,7 @@ public class ResourceReset extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         new Commands(this);
+        new Listeners(this);
         reload();
     }
 

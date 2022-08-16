@@ -24,3 +24,4 @@ worlds:
     teleportRange: 2500
 teleportAttempts: 10
 disallowedCommands:
+- /sethome
