@@ -71,6 +71,7 @@ public class TeleportManager {
             }
             player.showTitle(Title.title(titleComp("Searching..."),
                     titleComp(++secondsElapsed[0] + "s"),
+                    // defaults except fade in
                     Title.Times.times(Duration.ZERO, TICK.multipliedBy(70), TICK.multipliedBy(20))));
         }, 0, 20);
     }

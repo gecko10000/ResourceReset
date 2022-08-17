@@ -1,4 +1,4 @@
-resource,rw,rtp resourceWorld:world? player:target?(context self) {
+resource,rw resourceWorld:world? player:target?(context self) {
     permission resource.teleport
     help Teleport to a resource world
     hook rtp
