@@ -3,10 +3,7 @@ package gecko10000.ResourceReset;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.util.TriState;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -99,7 +96,9 @@ public class ResourceReset extends JavaPlugin {
         WorldCreator creator = new WorldCreator(name)
                 .environment(e);
         creator.keepSpawnLoaded(TriState.FALSE);
-        creator.createWorld().getWorldBorder().setSize(borderSize);
+        World world = creator.createWorld();
+        world.getWorldBorder().setSize(borderSize);
+        world.setGameRule(GameRule.KEEP_INVENTORY, getConfig().getBoolean("gamerules.keepInventory"));
     }
 
     public Set<String> getResourceWorldNames() {
