@@ -20,7 +20,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class ResourceReset extends JavaPlugin {
 
-    public final TeleportManager manager = new TeleportManager(this);
     private AutomaticReset automaticReset;
 
     @Override
@@ -59,8 +58,8 @@ public class ResourceReset extends JavaPlugin {
 
     private void regenerateWorld(World world, String displayName) {
         String name = world.getName();
-        World.Environment type = world.getEnvironment();
-        int borderSize = (int) world.getWorldBorder().getSize();
+        World.Environment type = World.Environment.valueOf(getConfig().getString("worlds." + displayName + ".type"));
+        int borderSize = getConfig().getInt("worlds." + displayName + ".size");
         World mainWorld = Bukkit.getWorlds().get(0);
         world.getPlayers().forEach(p -> p.teleport(mainWorld.getSpawnLocation()));
         Bukkit.unloadWorld(world, false);

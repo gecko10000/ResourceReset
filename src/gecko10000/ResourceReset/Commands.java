@@ -15,15 +15,7 @@ public class Commands {
 
     public Commands(ResourceReset plugin) {
         this.plugin = plugin;
-        ArgType<String> resourceWorldType = new ArgType<>("resourceWorld", s -> {
-            // check that config contains the world and it is therefore
-            if (!nameInConfig(s)) {
-                return null;
-            }
-            return s;
-        }).tabStream(s -> plugin.getResourceWorldNames().stream());
         new CommandParser(plugin.getResource("command.rdcml"))
-                .setArgTypes(resourceWorldType)
                 .parse()
                 .register("resource", this);
     }
@@ -32,16 +24,6 @@ public class Commands {
         return plugin.getConfig().getConfigurationSection("worlds")
                 .getKeys(false).stream()
                 .anyMatch(worldName::equals);
-    }
-
-    @CommandHook("rtp")
-    public void rtp(CommandSender sender, String worldName, Player target) {
-        if (target == null
-            || (!sender.getName().equals(target.getName()) && !sender.hasPermission("resource.teleport.others"))) {
-            plugin.sendMessage(sender, "&cInvalid player.");
-            return;
-        }
-        plugin.manager.randomTeleport(target, worldName);
     }
 
     @CommandHook("reload")

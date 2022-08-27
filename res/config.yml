@@ -10,19 +10,14 @@ worlds:
     # world border size
     # this is a DIAMETER
     size: 5000
-    # teleport RADIUS
-    teleportRange: 2500
   nether:
     world: resource_nether
     type: NETHER
     size: 5000
-    teleportRange: 2500
   end:
     world: resource_the_end
     type: THE_END
     size: 5000
-    teleportRange: 2500
-teleportAttempts: 10
 disallowedCommands:
 - /sethome
 resetIntervalHours: 72
