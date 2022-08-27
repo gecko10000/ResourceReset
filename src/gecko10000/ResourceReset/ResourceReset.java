@@ -45,7 +45,8 @@ public class ResourceReset extends JavaPlugin {
         saveConfig();
         Task.syncDelayed(() -> {
             int[] order = {0};
-            getResourceWorldNames().forEach(s -> {
+            Set<String> resourceWorlds = getResourceWorldNames();
+            resourceWorlds.forEach(s -> {
                 String worldName = getConfig().getString("worlds." + s + ".world");
                 if (worldName == null) return;
                 World world = Bukkit.getWorld(worldName);
@@ -53,6 +54,9 @@ public class ResourceReset extends JavaPlugin {
                 Task.syncDelayed(() -> regenerateWorld(world, s),
                         20L * DELAY * order[0]++);
             });
+            Task.syncDelayed(() -> getConfig().getStringList("commandsAfterReset")
+                    .forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command)),
+                    20L * DELAY * (resourceWorlds.size() + 1));
         }, 20 * DELAY);
     }
 

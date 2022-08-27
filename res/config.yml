@@ -23,3 +23,5 @@ disallowedCommands:
 resetIntervalHours: 72
 gamerules:
   keepInventory: true
+commandsAfterReset:
+- cmi reload
