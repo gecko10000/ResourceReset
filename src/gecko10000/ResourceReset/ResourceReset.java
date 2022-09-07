@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class ResourceReset extends JavaPlugin {
 
-    private AutomaticReset automaticReset;
+    public AutomaticReset automaticReset;
 
     @Override
     public void onEnable() {
@@ -28,6 +28,9 @@ public class ResourceReset extends JavaPlugin {
         reload();
         new Commands(this);
         new Listeners(this);
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new Placeholder(this);
+        }
     }
 
     public void reload() {

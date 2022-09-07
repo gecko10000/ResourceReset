@@ -16,13 +16,17 @@ public class AutomaticReset {
 
     public void restartTask() {
         if (task != null) task.cancel();
-        long lastRegen = plugin.getConfig().getLong("lastRegen");
-        long hoursDelay = plugin.getConfig().getLong("resetIntervalHours");
-        long remainingMillis = lastRegen + Duration.ofHours(hoursDelay).toMillis() - System.currentTimeMillis();
+        long remainingMillis = remainingMilliseconds();
         task = Task.syncDelayed(() -> {
             plugin.regenerateWorlds();
             restartTask();
         }, Math.max(remainingMillis / 50, 0));
+    }
+
+    public long remainingMilliseconds() {
+        long lastRegen = plugin.getConfig().getLong("lastRegen");
+        long hoursDelay = plugin.getConfig().getLong("resetIntervalHours");
+        return lastRegen + Duration.ofHours(hoursDelay).toMillis() - System.currentTimeMillis();
     }
 
 }

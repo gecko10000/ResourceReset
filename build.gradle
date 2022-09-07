@@ -20,9 +20,11 @@ version '0.1'
 repositories {
     maven { url "https://repo.papermc.io/repository/maven-public/" }
     maven { url "https://jitpack.io" }
+    maven { url "https://repo.extendedclip.com/content/repositories/placeholderapi/" }
 }
 
 dependencies {
     compileOnly "io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT"
     compileOnly "com.github.Redempt:RedLib:6.5.3.2"
+    compileOnly "me.clip:placeholderapi:2.11.2"
 }
