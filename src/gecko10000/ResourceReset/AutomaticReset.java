@@ -17,7 +17,7 @@ public class AutomaticReset {
     public void restartTask() {
         if (task != null) task.cancel();
         long remainingMillis = remainingMilliseconds();
-        task = Task.syncDelayed(() -> {
+        task = Task.asyncDelayed(() -> {
             plugin.regenerateWorlds();
             restartTask();
         }, Math.max(remainingMillis / 50, 0));
