@@ -4,6 +4,8 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.TimeUnit;
+
 public class Placeholder extends PlaceholderExpansion {
 
     private final ResourceReset plugin;
@@ -36,7 +38,7 @@ public class Placeholder extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, String params) {
         if (!params.equals("next_reset")) return null;
-        return "" + plugin.automaticReset.remainingMilliseconds() / 1000;
+        return "" + plugin.automaticReset.task.getDelay(TimeUnit.SECONDS);
     }
 
 }
