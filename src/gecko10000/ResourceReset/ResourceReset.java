@@ -33,6 +33,11 @@ public class ResourceReset extends JavaPlugin {
         }
     }
 
+    @Override
+    public void onDisable() {
+        this.automaticReset.task.cancel(true);
+    }
+
     public void reload() {
         saveDefaultConfig();
         reloadConfig();
